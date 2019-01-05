@@ -31,7 +31,7 @@ try:
         terminal_time = time.strftime("%H:%M ")
         
         #record for duration
-        print("Listening...")
+        print("Listening for " + dur + "seconds...")
         # arecord options:
         #   original -f dat =  (16 bit little endian, 48000, stereo) [-f S16_LE -c2 -r48000]
         #   --quiet  suppress messages
