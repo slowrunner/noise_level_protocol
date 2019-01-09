@@ -1,7 +1,7 @@
 # noise_level_protocol
-Raspberry Pi/Python project for noise level detection, recording and plot a noise level protocol (e.g. for loud neighbour)
+Raspberry Pi/Python project to monitor noise levels, save recordings, and plot up to 24 hours of measurements
 
-<img src="pic/2018-04-12.png" width="60%">  
+<img src="pic/Example_YYYY-MM-DD.png" width="60%">  
 
 **Introduction:**  
 This is based on https://github.com/Mob-Barley/noise_level_protocol.

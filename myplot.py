@@ -14,10 +14,10 @@ import matplotlib.patches as mpatches
 from matplotlib.ticker import AutoMinorLocator
 
 
-dateOfPlot = date.today()
+#dateOfPlot = date.today()
 
 # uncomment next line to plot yesterday's data
-#dateOfPlot = date.today() - timedelta(days=1)
+dateOfPlot = date.today() - timedelta(days=1)
 
 filename_csv = "/home/pi/Carl/Projects/noise_level_protocol/csv/" + dateOfPlot.strftime("%Y%m%d") + ".csv"
 i = int(dateOfPlot.strftime("%Y"))
