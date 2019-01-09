@@ -4,6 +4,7 @@
 # ### mydetect.py  Monitor loudness, save recording if above A-weighted peak or RMS thresholds
 #
 # (Use calibrate.py to create equation for peak and RMS A-weighted loudness for selected microphone)
+# (Use plotly.py to create 24 hour plots of peak and RMS results)
 #
 # This program records a 48kHz 16bit mono wave file for the set duration using arecord,
 # then uses "SoundExchange" program sox to extract the peak and rms amplitudes between 0=no sound to 1.0 loudest
@@ -14,6 +15,9 @@
 #      the date-time, Peak and RMS loudness values are appended to a comma-separated-values (csv) file,
 #      the wav file is compressed using lame to an mp3 file for later review.
 # The wav file is deleted at the end of this loop, or upon cntl-C detection.
+#
+# .wav and .mp3 files are written to <base_folder>/audio/<date>/  (created if not existing)
+# .csv files are written (one per day) to <base_folder>/csv/      (created if not existing)
 #
 # The basis for this program came from https://github.com/Mob-Barley/noise_level_protocol
 #
@@ -27,7 +31,7 @@ import csv
 # dBA Reference (Robot Measurements)
 # 20 ~ Threshold of Hearing
 # 27 ~ (Carpeted Room With Nobody Home)
-# 30 ~ Rustling Leaves 
+# 30 ~ Rustling Leaves
 # 37 ~ (Home Office / Computer Fans)
 # 40 ~ Quiet Whisper
 # 45 ~ (Quite Whistling)
@@ -60,7 +64,7 @@ header_csv = ("time", "Loudness Peak(dBA)", "RMS Loudness(dBA)")
 base_folder = "/home/pi/Carl/Projects/noise_level_protocol/"
 
 #change duration to detect here
-dur = " 30 "  # seconds suggest 10-120
+dur = " 120 "  # seconds suggest 10-120
 
 # test your microphone 30-80 dB in 5 dB steps with calibrate.py
 # create the function e.g. with mycurvefit.com
@@ -77,6 +81,11 @@ b_rms = 0.04039854
 c_rms = 5.363753 * (10 ** -42)
 d_rms = 293.8987
 
+# make sure folder for csv files exists (executes once after clean_dirs or install)
+csvfolder = base_folder + "csv/"
+if not os.path.exists(csvfolder):
+            os.makedirs(csvfolder)
+            print(csvfolder + " folder created")
 
 try:
     while True:
@@ -86,11 +95,18 @@ try:
 
         #encode date time for filenames and data
         filedate = time.strftime("%Y%m%d-%H%M%S")
-        basefilename = base_folder + "audio/" + time.strftime("%Y%m%d") + "/" + filedate
+        audiofolder = base_folder + "audio/" + time.strftime("%Y%m%d") + "/"
+        basefilename = audiofolder + filedate
         wavfilename = basefilename + ".wav"
-        filename_csv = base_folder + "csv/" + time.strftime("%Y%m%d") + ".csv"
-        filedate_csv  = time.strftime("%Y-%m-%d %H:%M")
-        terminal_time = time.strftime("%H:%M ")
+        filename_csv = csvfolder + time.strftime("%Y%m%d") + ".csv"
+        filedate_csv  = time.strftime("%Y-%m-%d %H:%M:%S")
+        terminal_time = time.strftime("%H:%M:%S ")
+
+        # make sure folder for audio exists (executes once each day)
+        if not os.path.exists(audiofolder):
+            os.makedirs(audiofolder)
+            print(audiofolder + " folder created")
+
 
         #record for duration
         print("Listening for " + dur + " seconds...")
@@ -112,6 +128,10 @@ try:
         sox_peak = subprocess.getoutput("sox " + wavfilename + " -n stat 2>&1 | grep 'Maximum amplitude' | cut -d ':' -f 2")
         sox_rms = subprocess.getoutput("sox " + wavfilename + " -n stat 2>&1 | grep 'RMS.*amplitude' | cut -d ':' -f 2")
 
+        # Longer durations need a little extra time to complete (will lose the Measured values printout for some reason)
+        if int(dur) >= 30: time.sleep(1)
+        if int(dur) >= 60: time.sleep(1)
+
         # clear console output so far
         #os.system('clear')
 
@@ -130,8 +150,8 @@ try:
         ext_rms = int(round(rms_dBA, 0))
 
 
-        #print("Measured values - peak: " + sox_peak_amplitude + " rms: " + sox_rms_amplitude + " == peak: " + str(round(peak_dBA,1)) + " dBA / rms: " + str(round(rms_dBA,1)) + " dBA\n")
-        print("Measured values - peak: " + sox_peak_amplitude + " rms: " + sox_rms_amplitude + " == peak: " + str(ext_peak) + " dBA / rms: " + str(ext_rms) + " dBA\n")
+        #print("Measured values - peak: " + sox_peak_amplitude + " rms: " + sox_rms_amplitude + " == peak: " + str(round(peak_dBA,1)) + " dBA / rms: " + str(round(rms_dBA,1)) + " dBA")
+        print("Measured values - peak: " + sox_peak_amplitude + " rms: " + sox_rms_amplitude + " == peak: " + str(ext_peak) + " dBA / rms: " + str(ext_rms) + " dBA")
 
 
         #csv

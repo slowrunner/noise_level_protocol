@@ -14,14 +14,17 @@ import matplotlib.patches as mpatches
 from matplotlib.ticker import AutoMinorLocator
 
 
-tomorrow = date.today() - timedelta(days=1)
+dateOfPlot = date.today()
 
-filename_csv = "/home/pi/noise/csv/" + tomorrow.strftime("%Y%m%d") + ".csv"
-i = int(tomorrow.strftime("%Y"))
-j = int(tomorrow.strftime("%m"))
-k = int(tomorrow.strftime("%d"))
-title_date = tomorrow.strftime('%d.%m.%Y')
-pic_title = tomorrow.strftime('%Y-%m-%d')
+# uncomment next line to plot yesterday's data
+#dateOfPlot = date.today() - timedelta(days=1)
+
+filename_csv = "/home/pi/Carl/Projects/noise_level_protocol/csv/" + dateOfPlot.strftime("%Y%m%d") + ".csv"
+i = int(dateOfPlot.strftime("%Y"))
+j = int(dateOfPlot.strftime("%m"))
+k = int(dateOfPlot.strftime("%d"))
+title_date = dateOfPlot.strftime('%d.%m.%Y')
+pic_title = dateOfPlot.strftime('%Y-%m-%d')
 
 #csv
 with open(filename_csv) as f:
@@ -31,7 +34,7 @@ with open(filename_csv) as f:
     dates, highs, rms = [], [], []
     for row in reader:
         
-        current_date = datetime.datetime.strptime(row[0], "%Y-%m-%d %H:%M")
+        current_date = datetime.datetime.strptime(row[0], "%Y-%m-%d %H:%M:%S")
         dates.append(current_date)
 
         high = float(row[1])
@@ -86,4 +89,4 @@ plt.xlim(
 )
 fig.autofmt_xdate()
 fig.set_size_inches(14,10)
-plt.savefig('/home/pi/noise/pic/' + pic_title + '.png', bbox_inches='tight')
+plt.savefig('/home/pi/Carl/Projects/noise_level_protocol/pic/' + pic_title + '.png', bbox_inches='tight')
