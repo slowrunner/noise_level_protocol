@@ -5,6 +5,22 @@ Raspberry Pi/Python project for noise level detection, recording and plot a nois
 
 **Introduction:**  
 This is based on https://github.com/Mob-Barley/noise_level_protocol.
+- To run it:  
+  python3 mydetect.py  
+- mydetect.py:  Monitor loudness, save recording if above A-weighted peak or RMS thresholds
+- (Use calibrate.py to create values for equation for peak and RMS A-weighted loudness for selected microphone)
+- (Use plotly.py to create 24 hour plots of peak and RMS results)
+- mydetect.py records a 48kHz 16bit mono wave file for the set duration using arecord,
+  then uses "SoundExchange" program sox to extract the peak and rms amplitudes between 0=no sound to 1.0 loudest
+  Next the amplitudes are converted to "estimated" standard A-weighted loudness values
+  using a nonlinear 4 parameter logistic regression (single sided sigmoidal equation):
+  y = d + (a - d)/(1 + (x / c)**b)
+  If either the peak or RMS A-weighted loudness values are above trigger thresholds,
+  the date-time, Peak and RMS loudness values are appended to a comma-separated-values (csv) file,
+  the wav file is compressed using lame to an mp3 file for later review.
+  The wav file is deleted at the end of this loop, or upon cntl-C detection.
+- .wav and .mp3 files are written to <base_folder>/audio/<date>/  (created if not existing)
+- .csv files are written (one per day) to <base_folder>/csv/      (created if not existing)
 
 I made the following mods/"improvements" for my use:
 - removed requirement to make_dirs.py (program will create any needed folders)
@@ -27,9 +43,9 @@ I made the following mods/"improvements" for my use:
 - USB mic (I'm using Kinobo "mini akira"
 
 **Installation:**  
-The base directory is set in base_dir variable:  /home/pi/Carl/Projects/noise_level_protocol/
-The microphone has to be set up and accessible as plughw:1,0. 
-The program records all the time, and then deletes quiet files.
+- The base directory is set in base_dir variable:  /home/pi/Carl/Projects/noise_level_protocol/
+- The microphone has to be set up and accessible as plughw:1,0. 
+- The program records all the time, and then deletes quiet files.
 
 Packages needed:  
 -plotly  
@@ -76,8 +92,8 @@ Packages needed:
    Select Fit Method->Nonlinear->4PL
    Select Weighting->None
    Copy down dBA equation:
-       a = -3989824  b=0.1744041, c=7.172477 * (10 ** -30), d= 111.4455 
-       y = d + (a - d)/(1 + (x/c)**b)  
+   a = -3989824  b=0.1744041, c=7.172477 * (10 ** -30), d= 111.4455 
+   y = d + (a - d)/(1 + (x/c)**b)  
 
 5. Repeat for RMS equation
 
