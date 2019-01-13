@@ -21,11 +21,18 @@ try:
 
         #time
         filedate = time.strftime("%Y%m%d-%H%M%S")
+        audiofolder = base_folder + "audio/" + time.strftime("%Y%m%d") + "/"
         basefilename = base_folder + "audio/" + time.strftime("%Y%m%d") + "/" + filedate
         wavfilename = basefilename + ".wav"
         filename_csv = base_folder + "csv/" + time.strftime("%Y%m%d") + ".csv"
         filedate_csv  = time.strftime("%Y-%m-%d %H:%M")
         terminal_time = time.strftime("%H:%M ")
+
+        # make sure folder for audio exists (executes once)
+        if not os.path.exists(audiofolder):
+          os.makedirs(audiofolder)
+          print(audiofolder + " folder created")
+
 
         #record for duration
         print("Listening for " + dur + " seconds...")

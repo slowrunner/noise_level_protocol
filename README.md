@@ -5,11 +5,14 @@ Raspberry Pi/Python project to monitor noise levels, save recordings, and plot u
 
 **Introduction:**  
 This is based on https://github.com/Mob-Barley/noise_level_protocol.
-- To run it:  
-  python3 mydetect.py  
+- To run it:
+  python3 calibrate.py  
+  python3 mydetect.py 
+  python3 myplot.py
+ 
 - mydetect.py:  Monitor loudness, save recording if above A-weighted peak or RMS thresholds
 - (Use calibrate.py to create values for equation for peak and RMS A-weighted loudness for selected microphone)
-- (Use plotly.py to create 24 hour plots of peak and RMS results)
+- (Use myplot.py to create 24 hour plots of peak and RMS results)
 - mydetect.py records a 48kHz 16bit mono wave file for the set duration using arecord,
   then uses "SoundExchange" program sox to extract the peak and rms amplitudes between 0=no sound to 1.0 loudest
   Next the amplitudes are converted to "estimated" standard A-weighted loudness values
@@ -23,7 +26,7 @@ This is based on https://github.com/Mob-Barley/noise_level_protocol.
 - .csv files are written (one per day) to <base_folder>/csv/      (created if not existing)
 
 I made the following mods/"improvements" for my use:
-- removed requirement to make_dirs.py (program will create any needed folders)
+- removed requirement to make_dirs.py (programs will create any needed folders)
 - broke the record and compress steps apart.  Program records to a .wav file, if above threshold, it compresses to .mp3.
 - my mic is only one channel, so record -c1 and convert -m m (mono)
 - my mic only works well at 48kHz, so record and convert at 48kHz
@@ -36,11 +39,11 @@ I made the following mods/"improvements" for my use:
 - save timestampped loudness to daily csv file  
 - save mp3 compressed sound recording if above selectable thresholds for later analysis 
 - create a noise level plot every day  
-- send an email with the plot  
+  
 
 **Hardware:**  
 - Raspberry Pi 3 running with Raspbian.
-- USB mic (I'm using Kinobo "mini akira"
+- USB mic (I'm using Kinobo "Mini Akira")
 
 **Installation:**  
 - The base directory is set in base_dir variable:  /home/pi/Carl/Projects/noise_level_protocol/
@@ -103,12 +106,6 @@ Packages needed:
 
 7. Repeat playing PinkNoise at 40 60 and 80 dBA, to verify mydetect.py loudness values approximately match the soundmeter (+/-3dBA)
 
-8. If you wish an E-Mail with the plot, you can modify the gmail.py. Important is, that third party applications can access the mail account.
-
 9. Data can be plotted with myplot.py - view plots in /home/pi/Carl/Projects/noise_level_protocol/pic/
   
-10. Example for crontab to run your scripts periodically: type crontab -e in terminal and enter  
-    05 0 * * *  python3 /home/pi/Carl/Projects/noise_level_protocol/myplot.py > /home/pi/Desktop/clog.log 2>&1 -q -f  
-    10 0 * * *  python3 /home/pi/Carl/Projects/noise_level_protocol/gmail.py > /home/pi/Desktop/clog.log 2>&1 -q -f  
-
 

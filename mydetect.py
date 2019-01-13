@@ -4,7 +4,7 @@
 # ### mydetect.py  Monitor loudness, save recording if above A-weighted peak or RMS thresholds
 #
 # (Use calibrate.py to create equation for peak and RMS A-weighted loudness for selected microphone)
-# (Use plotly.py to create 24 hour plots of peak and RMS results)
+# (Use myplot.py to create (up to) 24 hour plots of peak and RMS results)
 #
 # This program records a 48kHz 16bit mono wave file for the set duration using arecord,
 # then uses "SoundExchange" program sox to extract the peak and rms amplitudes between 0=no sound to 1.0 loudest
@@ -34,7 +34,7 @@ import csv
 # 30 ~ Rustling Leaves
 # 37 ~ (Home Office / Computer Fans)
 # 40 ~ Quiet Whisper
-# 45 ~ (Quite Whistling)
+# 45 ~ (Quiet Whistling)
 # 50 ~ Quiet Home
 # 51 ~ (Home Office Typing Peaks)
 # 60 ~ Quiet Street (Quiet Conversation)
@@ -64,7 +64,7 @@ header_csv = ("time", "Loudness Peak(dBA)", "RMS Loudness(dBA)")
 base_folder = "/home/pi/Carl/Projects/noise_level_protocol/"
 
 #change duration to detect here
-dur = " 120 "  # seconds suggest 10-120
+dur = " 30 "  # seconds suggest 10-120
 
 # test your microphone 30-80 dB in 5 dB steps with calibrate.py
 # create the function e.g. with mycurvefit.com
